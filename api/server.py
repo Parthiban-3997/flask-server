@@ -120,6 +120,10 @@ def main(query):
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+@app.route('/')
+def home():
+    return "Welcome to the Flask server! The server is running."
+
 @app.route('/query', methods=['POST'])
 def query():
     try:
@@ -140,4 +144,4 @@ if __name__ == "__main__":
         query = sys.argv[1]
         print(main(query))
     else:
-        app.run(port=5000)
+        app.run
