@@ -1,9 +1,0 @@
-langchain_google_genai
-langchain_core
-python-dotenv
-langchain_community
-uvicorn
-bs4
-beautifulsoup4
-Flask
-requests
