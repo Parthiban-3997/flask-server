@@ -1,6 +1,5 @@
 flask
 flask-cors
-langchain_core
 langchain_google_genai
 langchain
 
