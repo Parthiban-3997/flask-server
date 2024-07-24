@@ -3,4 +3,5 @@ flask-cors
 python-dotenv
 langchain-core
 langchain-google-genai
+Gunicorn
 
