@@ -5,6 +5,10 @@ from app import main
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+@app.route("/")
+def start():
+    return "The Flask Server is Running"
+
 @app.route('/query', methods=['POST'])
 def query():
     try:
