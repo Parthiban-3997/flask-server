@@ -1,4 +1,6 @@
-flask
-flask_cors
-langchain_google_genai
-langchain_core
+Flask
+flask-cors
+python-dotenv
+langchain-core
+langchain-google-genai
+
