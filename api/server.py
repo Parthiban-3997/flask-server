@@ -23,5 +23,5 @@ def query():
         print(f"Error: {e}")  # Log the error to the console
         return jsonify({'error': 'An internal error occurred'}), 500
 
-if __name__ == '__main__':
-    app.run()
+#if __name__ == '__main__':
+#    app.run()
