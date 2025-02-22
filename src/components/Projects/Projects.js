@@ -27,7 +27,7 @@ function Projects() {
               isBlog={false}
               title="Multimodal Emotion Recognition"
               description="Developed an advanced AI system integrating facial and voice recognition to enhance candidate assessment accuracy in real-time. Implemented custom deep learning models and leveraged MediaPipe for robust facial tracking, optimizing efficiency and deployment with Docker containers and CI/CD pipeline on Azure."
-              ghLink="https://github.com/Parthiban-R-3997/Multimodal-Emotion-Recognition-using-Speech-Cues-and-Facial-Expressions"
+              ghLink="https://github.com/Parthiban-3997/Multimodal-Emotion-Recognition-using-Speech-Cues-and-Facial-Expressions"
               demoLink="https://multimodal-emotion-detection.azurewebsites.net/"
             />
           </Col>
@@ -38,7 +38,7 @@ function Projects() {
               isBlog={false}
               title="Smart ATS"
               description="Created a streamlined Smart ATS web application using Streamlit and Google's Gemini Pro AI model to improve the hiring process. Enhanced resume fine-tuning against job descriptions and evaluation accuracy, significantly boosting candidate confidence and success rates."
-              ghLink="https://github.com/Parthiban-R-3997/Smart-ATS-System-Using-Google-Gemini"
+              ghLink="https://github.com/Parthiban-3997/Smart-ATS-System-Using-Google-Gemini"
               demoLink="https://huggingface.co/spaces/Parthiban97/ATS_Smart_System"
             />
           </Col>
@@ -49,7 +49,7 @@ function Projects() {
               isBlog={false}
               title="Advanced Document Q&A System"
               description="Built a Streamlit web app using Groq's LPU inference engine to speed up document question-answering. Integrated RAG approach and FAISS vector DB for scalable and reliable responses, optimizing deployment management and operational efficiency."
-              ghLink="https://github.com/Parthiban-R-3997/Chat_Groq_Document_Q_A"
+              ghLink="https://github.com/Parthiban-3997/Chat_Groq_Document_Q_A"
               demoLink="https://huggingface.co/spaces/Parthiban97/Chat_Groq_Document_Q_A"              
             />
           </Col>
@@ -61,7 +61,7 @@ function Projects() {
               isBlog={false}
               title="AI Research Assistant"
               description="Developed a specialized web app for research assistance, reducing search time by 90% and offering custom URL support. Integrated AI agents for adaptive responses and improved search efficiency, enhancing user experience and insights."
-              ghLink="https://github.com/Parthiban-R-3997/Chat_With_Multiple_Data_Sources"
+              ghLink="https://github.com/Parthiban-3997/Chat_With_Multiple_Data_Sources"
               demoLink="https://huggingface.co/spaces/Parthiban97/Chat_With_Multiple_Data_Sources"
             />
           </Col>
@@ -72,7 +72,7 @@ function Projects() {
               isBlog={false}
               title="SQL Chat Assistant"
               description="Created a web app enabling natural language SQL queries across multiple databases, significantly reducing data retrieval time. Integrated GPT and Groq models for accurate and prompt responses, supporting business professionals in obtaining efficient and precise results."
-              ghLink="https://github.com/Parthiban-R-3997/Chat_With_Multiple_SQL_Databases"
+              ghLink="https://github.com/Parthiban-3997/Chat_With_Multiple_SQL_Databases"
               demoLink="https://chatwithmultiplesqldatabases.streamlit.app/"
             />
           </Col>
@@ -83,7 +83,7 @@ function Projects() {
               isBlog={false}
               title="Real-Time Newsletter Generation"
               description="Leveraging advanced AI technology to automate the creation of customized newsletters in real-time. Using the CrewAI framework, it orchestrates a team of AI agents to research, curate, and design newsletters based on user-specified topics. Ideal for businesses and individuals seeking efficient, professional-grade newsletter solutions without extensive manual effort."
-              ghLink="https://github.com/Parthiban-R-3997/Real_Time_Based_News_Letter_Generation_Using_CrewAI"
+              ghLink="https://github.com/Parthiban-3997/Real_Time_Based_News_Letter_Generation_Using_CrewAI"
               demoLink="https://realtimebasednewslettergeneration.streamlit.app/"      
             />
           </Col>
