@@ -57,7 +57,7 @@ summary_prompt_template = PromptTemplate(
     template=summary_template
 )
 
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 chain = LLMChain(llm=llm, prompt=summary_prompt_template)
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
