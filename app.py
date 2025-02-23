@@ -1,12 +1,36 @@
 import sys
 import json
+import logging
+from pathlib import Path
+from typing import Dict, Any, Optional
+from dataclasses import dataclass
+
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
 from dotenv import load_dotenv
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Load environment variables
 load_dotenv()
+
+@dataclass
+class Config:
+    """Application configuration"""
+    model_name: str = "gemini-2.0-flash"
+    memory_key: str = "chat_history"
+    github_data_path: str = "github_data.json"
+    linkedin_data_path: str = "linkedin_data.json"
+    max_query_length: int = 1000
+
+# Initialize config
+config = Config()
 
 summary_template = """
 You are Parthiban (Parthi), an AI/ML engineer. Answer all queries in the first person, as if you are Parthi himself.
@@ -29256,34 +29280,132 @@ summary_prompt_template = PromptTemplate(
     template=summary_template
 )
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+# Initialize LLM and memory
+llm = ChatGoogleGenerativeAI(model=config.model_name)
 chain = LLMChain(llm=llm, prompt=summary_prompt_template)
+memory = ConversationBufferMemory(memory_key=config.memory_key, return_messages=True)
 
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-
-def prepare_repo_information(repo_details):
-    num_repos = len(repo_details)
-    projects = ', '.join(repo_details.keys())
-    readme_contents = '\n\n'.join([f"Repo Name: {name}\nDescription: {details['description']}\nREADME:\n{details['readme']}" for name, details in repo_details.items()])
-    return {
-        'num_repos': num_repos,
-        'projects': projects,
-        'information': readme_contents
-    }
-
-def main(query):
+def load_json_data(file_path: Path) -> Optional[Dict]:
+    """
+    Load and validate JSON data from file.
+    
+    Args:
+        file_path: Path to JSON file
+        
+    Returns:
+        Dictionary containing JSON data or None if error
+    """
     try:
-        with open("github_data.json", "r") as file:
-            repo_details = json.load(file)
+        if not file_path.exists():
+            logging.error(f"File not found: {file_path}")
+            return None
+            
+        with file_path.open() as file:
+            data = json.load(file)
+            
+        if not isinstance(data, dict):
+            logging.error(f"Invalid data format in {file_path}")
+            return None
+            
+        return data
+    except Exception as e:
+        logging.error(f"Error loading {file_path}: {e}")
+        return None
 
+def prepare_repo_information(repo_details: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Prepare repository information for the LLM chain.
+    
+    Args:
+        repo_details: Dictionary containing repository details
+        
+    Returns:
+        Dictionary with processed repository information
+    """
+    try:
+        num_repos = len(repo_details)
+        projects = ', '.join(repo_details.keys())
+        
+        readme_contents = '\n\n'.join(
+            f"Repo Name: {name}\n"
+            f"Description: {details['description']}\n"
+            f"README:\n{details['readme']}"
+            for name, details in repo_details.items()
+        )
+        
+        return {
+            'num_repos': num_repos,
+            'projects': projects, 
+            'information': readme_contents
+        }
+    except Exception as e:
+        logging.error(f"Error preparing repo information: {e}")
+        return {}
+
+def validate_query(query: str) -> Optional[str]:
+    """
+    Validate the input query.
+    
+    Args:
+        query: User's query string
+        
+    Returns:
+        Error message if invalid, None if valid
+    """
+    if not query or not query.strip():
+        return "Error: Empty query provided"
+    
+    if len(query) > config.max_query_length:
+        return f"Error: Query too long. Please limit to {config.max_query_length} characters."
+    
+    return None
+
+def cleanup_memory():
+    """Clear conversation memory."""
+    try:
+        memory.clear()
+        logging.info("Conversation memory cleared")
+    except Exception as e:
+        logging.error(f"Error clearing memory: {e}")
+
+def main(query: str) -> str:
+    """
+    Process a query using the LLM chain.
+    
+    Args:
+        query: User's query string
+        
+    Returns:
+        Response from the LLM chain or error message
+    """
+    # Validate input
+    error = validate_query(query)
+    if error:
+        return error
+
+    try:
+        # Load GitHub data
+        repo_details = load_json_data(Path(config.github_data_path))
+        if repo_details is None:
+            return "Error: Could not load GitHub data"
+
+        # Process repository information
         repo_info = prepare_repo_information(repo_details)
+        if not repo_info:
+            return "Error: Could not process repository information"
 
-        linkedin_profile_url = "https://www.linkedin.com/in/parthiban-ravichandran/"
-        with open("linkedin_data.json", "r") as file:
-            linkedin_data = json.load(file)
+        # Load LinkedIn data
+        linkedin_data = load_json_data(Path(config.linkedin_data_path))
+        if linkedin_data is None:
+            return "Error: Could not load LinkedIn data"
 
-        linkedin_information = "\n".join([f"{key}: {value}" for key, value in linkedin_data.items()])
+        # Format LinkedIn information
+        linkedin_information = "\n".join(
+            f"{key}: {value}" 
+            for key, value in linkedin_data.items()
+        )
 
+        # Process query through LLM chain
         response = chain.invoke({
             "information": repo_info['information'],
             "query": query,
@@ -29292,17 +29414,30 @@ def main(query):
             "linkedin_information": linkedin_information
         })
 
-        memory.save_context({"input": query}, {"output": response["text"]})
+        # Save to memory
+        memory.save_context(
+            {"input": query}, 
+            {"output": response["text"]}
+        )
 
-        return response["text"]  # Return the raw response without formatting
+        return response["text"]
 
+    except FileNotFoundError as e:
+        logging.error(f"File not found error: {e}")
+        return "Error: Required data files not found"
+    except json.JSONDecodeError as e:
+        logging.error(f"JSON parsing error: {e}")
+        return "Error: Invalid data format in files"
     except Exception as e:
-        print(f"Error: {e}")
-        return "An error occurred while processing your request."
+        logging.error(f"Unexpected error: {e}")
+        return "An error occurred while processing your request"
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        query = sys.argv[1]
-        print(main(query))
-    else:
-        print("No query provided.")
+    try:
+        if len(sys.argv) > 1:
+            query = sys.argv[1]
+            print(main(query))
+        else:
+            print("No query provided.")
+    finally:
+        cleanup_memory()
